@@ -15,8 +15,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class Camera {
 
-	private static final int FOV = 130;
-	private static float cameraAngle = 20f;
+	private static final int FOV = 70;
 
 	private class Collision {
 		private float distance;
@@ -27,7 +26,7 @@ public class Camera {
 			this.orientation = orientation;
 		}
 	}
-	
+	//
 	public Texture green;
 	public Texture darkGreen;
 
@@ -37,7 +36,7 @@ public class Camera {
 
 		int amountOfRays = Gdx.graphics.getWidth();
 		float distanceBetweenRays = (float) FOV / (amountOfRays);
-
+		
 		for (int ray = 0; ray < amountOfRays; ray++) {
 			/*float rayAngle = Game.camAngle - (FOV / 2) + (distanceBetweenRays / 2) + distanceBetweenRays * ray;*/
 
@@ -79,8 +78,12 @@ public class Camera {
 			}
 			
 			distance *= Math.cos(rad(Math.min(a1, a2)));
-			int height = (int) (1500 / distance);
-			batch.draw(texture, ray, Gdx.graphics.getHeight() / 2 - height / 2, 1, height);
+			int height = (int) ((Gdx.graphics.getWidth() * 2.5) / distance);
+			int windowHeight = Gdx.graphics.getHeight();
+			int yOffset = (windowHeight - height) / 2;
+			batch.draw(texture, ray, yOffset, 1, height);
+			
+			
 		}
 	}
 
@@ -123,13 +126,13 @@ public class Camera {
 			break;
 		case 3:
 			float angle3 = 360 - rayAngle;
-			System.out.println("Angle3: " + angle3);
+			//System.out.println("Angle3: " + angle3);
 			if(angle3 == 90) {
 				yIncreasePerX = 0;
 			} else {
 				float tan = (float) Math.tan(rad(angle3));
-				System.out.println("Tan: " + tan);
-				System.out.println("Or: " + Math.tan(angle3));
+				//System.out.println("Tan: " + tan);
+				//System.out.println("Or: " + Math.tan(angle3));
 				xIncreasePerY = -tan;
 				yIncreasePerX = -1 / tan;
 			}

@@ -12,9 +12,13 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Game implements ApplicationListener {
 
@@ -24,54 +28,72 @@ public class Game implements ApplicationListener {
 		new LwjglApplication(new Game(), config);
 	}
 
-	public static int camAngle = 0;
+	public static float camAngle = 0;
 	public static float camX = 9.5f;
 	public static float camY = 9.5f;
 	
 	Map map;
-	Camera camera;
+	Camera gameCamera;
 	
 	SpriteBatch batch;
 	
 	Texture g;
 	
+	private com.badlogic.gdx.graphics.Camera orthoCamera;
+	private Viewport viewport;
+	
 	@Override
 	public void create() {
+		orthoCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		orthoCamera.position.set(orthoCamera.viewportWidth / 2, orthoCamera.viewportHeight / 2, 0);
+		viewport = new ScreenViewport(orthoCamera);
+		
 		batch = new SpriteBatch();
-		camera = new Camera();
-		camera.green = new Texture("green.png");
-		camera.darkGreen = new Texture("darkGreen.png");
+		gameCamera = new Camera();
+		gameCamera.green = new Texture("green.png");
+		gameCamera.darkGreen = new Texture("darkGreen.png");
 		map = new Map(this.getClass().getClassLoader().getResourceAsStream("map.txt"));
 	}
 
 	@Override
 	public void render() {
+		orthoCamera.update();
+		
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	    batch.begin();
-	    camera.render(batch, map);
+	    batch.setProjectionMatrix(orthoCamera.combined);
+	    gameCamera.render(batch, map);
 	    batch.end();
 	    
-	    int num = 50;
+	    float speed = 0.1f;
 	    
 	    if(Gdx.input.isKeyPressed(Keys.W)) {
-	    	camY += 0.1;
+	    	camX += Math.sin(Math.toRadians(camAngle)) * speed;
+	    	camY += Math.cos(Math.toRadians(camAngle)) * speed;
 	    }
 	    
 	    if(Gdx.input.isKeyPressed(Keys.S)) {
-	    	camY -= 0.1;
+	    	camX -= Math.sin(Math.toRadians(camAngle)) * speed;
+	    	camY -= Math.cos(Math.toRadians(camAngle)) * speed;
 	    }
 	    
 	    if(Gdx.input.isKeyPressed(Keys.A)) {
-	    	camX += 0.1;
+	    	float a = camAngle - 90;
+	    	if(a < 0) a += 360;
+	    	camX += Math.sin(Math.toRadians(a)) * speed;
+	    	camY += Math.cos(Math.toRadians(a)) * speed;
 	    }
 	    
 	    if(Gdx.input.isKeyPressed(Keys.D)) {
-	    	camX -= 0.1;
+	    	float d = camAngle + 90;
+	    	if(d >= 360) d -= 360;
+	    	camX += Math.sin(Math.toRadians(d)) * speed;
+	    	camY += Math.cos(Math.toRadians(d)) * speed;
 	    }
 	    
-	    if(Gdx.input.isKeyPressed(Keys.RIGHT)) camAngle += 1;
-	    if(Gdx.input.isKeyPressed(Keys.LEFT)) camAngle -= 1;
+	    if(Gdx.input.isKeyPressed(Keys.RIGHT)) camAngle += 1.5f;
+	    if(Gdx.input.isKeyPressed(Keys.LEFT)) camAngle -= 1.5f;
 	    if(camAngle >= 360) camAngle -= 360;
 	    if(camAngle < 0) camAngle += 360;
 	    
@@ -95,7 +117,7 @@ public class Game implements ApplicationListener {
 	
 	@Override
 	public void resize(int width, int height) {
-		
+		viewport.update(width, height, true);
 	}
 
 	@Override
