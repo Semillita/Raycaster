@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class Map {
 
 	private List<List<Integer>> blocks;
-	private int startX, startY;
+	private float startX = 9.5f, startY = 9.5f;
 	private int goalX, goalY;
 	
 	public Map(InputStream inputStream) {
@@ -29,8 +29,8 @@ public class Map {
 					System.out.println("Added block " + x + ", " + y);
 					break;
 				case '2':
-					startX = x;
-					startY = y;
+					startX = x + 0.5f;
+					startY = y + 0.5f;
 					break;
 				case'3':
 					goalX = x;
@@ -47,6 +47,14 @@ public class Map {
 	
 	public int getHeight() {
 		return 20;
+	}
+	
+	public float getStartX() {
+		return startX;
+	}
+	
+	public float getStartY() {
+		return startY;
 	}
 	
 	public boolean hasBlock(int x, int y) {

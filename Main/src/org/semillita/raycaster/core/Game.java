@@ -4,6 +4,7 @@ import java.io.InputStream;
 
 import org.semillita.raycaster.camera.Camera;
 import org.semillita.raycaster.map.Map;
+import org.semillita.raycaster.player.Player;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -28,12 +29,13 @@ public class Game implements ApplicationListener {
 		new LwjglApplication(new Game(), config);
 	}
 
-	public static float camAngle = 0;
-	public static float camX = 9.5f;
-	public static float camY = 9.5f;
+	//public static float camAngle = 0;
+	//public static float camX = 9.5f;
+	//public static float camY = 9.5f;
 	
 	Map map;
 	Camera gameCamera;
+	Player player;
 	
 	SpriteBatch batch;
 	
@@ -41,6 +43,8 @@ public class Game implements ApplicationListener {
 	
 	private com.badlogic.gdx.graphics.Camera orthoCamera;
 	private Viewport viewport;
+	
+	long lastFrame;
 	
 	@Override
 	public void create() {
@@ -53,6 +57,9 @@ public class Game implements ApplicationListener {
 		gameCamera.green = new Texture("green.png");
 		gameCamera.darkGreen = new Texture("darkGreen.png");
 		map = new Map(this.getClass().getClassLoader().getResourceAsStream("map.txt"));
+		player = new Player(map.getStartX(), map.getStartY(), 20);
+		
+		lastFrame = System.nanoTime();
 	}
 
 	@Override
@@ -63,56 +70,15 @@ public class Game implements ApplicationListener {
 	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	    batch.begin();
 	    batch.setProjectionMatrix(orthoCamera.combined);
-	    gameCamera.render(batch, map);
+	    gameCamera.render(batch, map, player);
 	    batch.end();
 	    
-	    float speed = 0.1f;
+	    player.move(map, gameCamera);
 	    
-	    if(Gdx.input.isKeyPressed(Keys.W)) {
-	    	camX += Math.sin(Math.toRadians(camAngle)) * speed;
-	    	camY += Math.cos(Math.toRadians(camAngle)) * speed;
-	    }
-	    
-	    if(Gdx.input.isKeyPressed(Keys.S)) {
-	    	camX -= Math.sin(Math.toRadians(camAngle)) * speed;
-	    	camY -= Math.cos(Math.toRadians(camAngle)) * speed;
-	    }
-	    
-	    if(Gdx.input.isKeyPressed(Keys.A)) {
-	    	float a = camAngle - 90;
-	    	if(a < 0) a += 360;
-	    	camX += Math.sin(Math.toRadians(a)) * speed;
-	    	camY += Math.cos(Math.toRadians(a)) * speed;
-	    }
-	    
-	    if(Gdx.input.isKeyPressed(Keys.D)) {
-	    	float d = camAngle + 90;
-	    	if(d >= 360) d -= 360;
-	    	camX += Math.sin(Math.toRadians(d)) * speed;
-	    	camY += Math.cos(Math.toRadians(d)) * speed;
-	    }
-	    
-	    if(Gdx.input.isKeyPressed(Keys.RIGHT)) camAngle += 1.5f;
-	    if(Gdx.input.isKeyPressed(Keys.LEFT)) camAngle -= 1.5f;
-	    if(camAngle >= 360) camAngle -= 360;
-	    if(camAngle < 0) camAngle += 360;
-	    
-	    /*if(camAngle >= 0 && camAngle < 90) {
-    	} else if(camAngle >= 90 && camAngle < 180) {
-    		
-    	} else if(camAngle >= 180 && camAngle < 270) {
-    		
-    	} else {
-    		
-    	}*/
-	    
-	    /*ShapeRenderer renderer = new ShapeRenderer();
-	    renderer.begin(ShapeRenderer.ShapeType.Filled);
-	    renderer.setColor(Color.BLUE);
-	    renderer.line(10, 10, 400, 200);
-	    renderer.end();*/
-	    
-	    //while(true) {}
+	    if(Gdx.input.isKeyPressed(Keys.RIGHT)) player.direction += 1f;
+	    if(Gdx.input.isKeyPressed(Keys.LEFT)) player.direction -= 1f;
+	    if(player.direction >= 360) player.direction -= 360;
+	    if(player.direction < 0) player.direction += 360;
 	}
 	
 	@Override
