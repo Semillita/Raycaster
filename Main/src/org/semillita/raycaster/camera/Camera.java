@@ -65,6 +65,8 @@ public class Camera {
 
 	public Collision castRay(Map map, Player player, float rayAngle) {
 		
+		rayAngle %= 360;
+		
 		float xIncreasePerY = -1, yIncreasePerX = -1;
 				
 		int zoneIndex = (int) rayAngle / 90;
