@@ -57,7 +57,7 @@ public class Game implements ApplicationListener {
 		gameCamera.green = new Texture("green.png");
 		gameCamera.darkGreen = new Texture("darkGreen.png");
 		map = new Map(this.getClass().getClassLoader().getResourceAsStream("map.txt"));
-		player = new Player(map.getStartX(), map.getStartY(), 20);
+		player = new Player(map.getStartX(), map.getStartY(), (float) 20);
 		
 		lastFrame = System.nanoTime();
 	}
@@ -74,11 +74,6 @@ public class Game implements ApplicationListener {
 	    batch.end();
 	    
 	    player.move(map, gameCamera);
-	    
-	    if(Gdx.input.isKeyPressed(Keys.RIGHT)) player.direction += 1f;
-	    if(Gdx.input.isKeyPressed(Keys.LEFT)) player.direction -= 1f;
-	    if(player.direction >= 360) player.direction -= 360;
-	    if(player.direction < 0) player.direction += 360;
 	}
 	
 	@Override
