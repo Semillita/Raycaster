@@ -11,6 +11,7 @@ public class Map {
 	private List<List<Integer>> blocks;
 	private float startX = 9.5f, startY = 9.5f;
 	private int goalX, goalY;
+	private int width, height;
 	
 	public Map(InputStream inputStream) {
 		Scanner scanner = new Scanner(inputStream);
@@ -20,13 +21,15 @@ public class Map {
 		}
 		scanner.close();
 		
+		height = lines.size();
+		width = lines.get(0).length();
+		
 		blocks = new ArrayList<>();
 		for(int y = 0; y < lines.size(); y++) {
 			for(int x = 0; x < lines.get(y).length(); x++) {
 				switch(lines.get(y).charAt(x)) {
 				case '1':
 					blocks.add(Arrays.asList(x, y));
-					System.out.println("Added block " + x + ", " + y);
 					break;
 				case '2':
 					startX = x + 0.5f;
@@ -42,11 +45,11 @@ public class Map {
 	}
 	
 	public int getWidth() {
-		return 20;
+		return width;
 	}
 	
 	public int getHeight() {
-		return 20;
+		return height;
 	}
 	
 	public float getStartX() {
@@ -61,6 +64,13 @@ public class Map {
 		List<Integer> block = Arrays.asList(x, y);
 		if(blocks.contains(block)) {
 			//System.out.println("Collision at " + block);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean hasGoal(int x, int y) {
+		if(x == goalX && y == goalY) {
 			return true;
 		}
 		return false;

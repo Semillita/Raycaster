@@ -5,6 +5,7 @@ import java.io.InputStream;
 import org.semillita.raycaster.camera.Camera;
 import org.semillita.raycaster.map.Map;
 import org.semillita.raycaster.player.Player;
+import org.semillita.raycaster.ui.UI;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -28,24 +29,18 @@ public class Game implements ApplicationListener {
 		
 		new LwjglApplication(new Game(), config);
 	}
-
-	//public static float camAngle = 0;
-	//public static float camX = 9.5f;
-	//public static float camY = 9.5f;
-	
-	Map map;
-	Camera gameCamera;
-	Player player;
-	
-	SpriteBatch batch;
-	
-	Texture g;
 	
 	private com.badlogic.gdx.graphics.Camera orthoCamera;
 	private Viewport viewport;
 	
-	long lastFrame;
+	SpriteBatch batch;
 	
+	Camera gameCamera;
+	Map map;
+	Player player;
+	
+	UI ui;
+			
 	@Override
 	public void create() {
 		orthoCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -53,13 +48,12 @@ public class Game implements ApplicationListener {
 		viewport = new ScreenViewport(orthoCamera);
 		
 		batch = new SpriteBatch();
+		
 		gameCamera = new Camera();
-		gameCamera.green = new Texture("green.png");
-		gameCamera.darkGreen = new Texture("darkGreen.png");
 		map = new Map(this.getClass().getClassLoader().getResourceAsStream("map.txt"));
 		player = new Player(map.getStartX(), map.getStartY(), (float) 20);
 		
-		lastFrame = System.nanoTime();
+		ui = new UI();
 	}
 
 	@Override

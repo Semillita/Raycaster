@@ -22,7 +22,14 @@ public class Camera {
 
 	public Texture green;
 	public Texture darkGreen;
+	public Texture red;
 
+	public Camera() {
+		green = new Texture("green.png");
+		darkGreen = new Texture("darkGreen.png");
+		red = new Texture("red.png");
+	}
+	
 	public void render(SpriteBatch batch, Map map, Player player) {
 		
 		int amountOfRays = Gdx.graphics.getWidth();
@@ -41,13 +48,15 @@ public class Camera {
 				rayAngle -= 360;
 			}
 			
-			if(rayAngle >= 360) System.out.println("!!!");
 			
 			Collision collision = castRay(map, player, rayAngle);
 			
 			float distance = collision.getDistance();
 			Texture texture;
-			if(collision.getOrientation() == Collision.Orientation.HORIZONTAL) {
+			
+			if(collision.isGoal()) {
+				texture = red;
+			} else if(collision.getOrientation() == Collision.Orientation.HORIZONTAL) {
 				texture = green;
 			} else {
 				texture = darkGreen;
@@ -97,18 +106,20 @@ public class Camera {
 	private Collision checkHorizontalCollision(Map map, Player player, float xIncreasePerY, int dir) {
 		int start;
 		if(dir == 1) {
-			start = (int) player.y + 1;
+			start = (int) player.getY() + 1;
 		} else {
-			start = (int) player.y;
+			start = (int) player.getY();
 		}
 		for(int yIndex = start; yIndex < map.getHeight() && yIndex >= 0; yIndex += dir) {
 			
-				float yIncrease = yIndex - player.y;
+				float yIncrease = yIndex - player.getY();
 				float xIncrease = xIncreasePerY * yIncrease;
-				float x = player.x + xIncrease;
+				float x = player.getX() + xIncrease;
 				
 				if((dir == 1 && map.hasBlock((int) x, yIndex)) || (dir == -1 && map.hasBlock((int) x, yIndex - 1))) {
 					return new Collision((float) Math.sqrt(yIncrease * yIncrease + xIncrease * xIncrease), Collision.Orientation.HORIZONTAL, false);
+				} else if ((dir == 1 && map.hasGoal((int) x, yIndex)) || (dir == -1 && map.hasGoal((int) x, yIndex - 1))) {
+					return new Collision((float) Math.sqrt(yIncrease * yIncrease + xIncrease * xIncrease), Collision.Orientation.HORIZONTAL, true);
 				}
 			
 		}
@@ -118,18 +129,20 @@ public class Camera {
 	private Collision checkVerticalCollision(Map map, Player player, float yIncreasePerX, int dir) {
 		int start;
 		if(dir == 1) {
-			start = (int) player.x + 1;
+			start = (int) player.getX() + 1;
 		} else {
-			start = (int) player.x;
+			start = (int) player.getX();
 		}
 		for(int xIndex = start; xIndex < map.getHeight() && xIndex >= 0; xIndex += dir) {
 			
-				float xIncrease = xIndex - player.x;
+				float xIncrease = xIndex - player.getX();
 				float yIncrease = yIncreasePerX * xIncrease;
-				float y = player.y + yIncrease;
+				float y = player.getY() + yIncrease;
 				
 				if((dir == 1 && map.hasBlock(xIndex,(int) y)) || (dir == -1 && map.hasBlock(xIndex - 1, (int) y))) {
 					return new Collision((float) Math.sqrt(yIncrease * yIncrease + xIncrease * xIncrease), Collision.Orientation.VERTICAL, false);
+				} else if ((dir == 1 && map.hasGoal(xIndex,(int) y)) || (dir == -1 && map.hasGoal(xIndex - 1,(int) y))) {
+					return new Collision((float) Math.sqrt(yIncrease * yIncrease + xIncrease * xIncrease), Collision.Orientation.VERTICAL, true);
 				}
 		}
 		return null;
