@@ -31,18 +31,24 @@ public class Game implements ApplicationListener {
 		GAME
 	}
 	
+	public static enum ColorTheme {
+		YELLOW,
+		GREEN,
+		PURPLE;
+	}
+	
 	private com.badlogic.gdx.graphics.Camera orthoCamera;
 	private Viewport viewport;
 	
-	SpriteBatch batch;
+	private SpriteBatch batch;
 	
-	Camera gameCamera;
-	Map map;
-	Player player;
-	UI ui;
+	private Camera gameCamera;
+	private Map map;
+	private Player player;
+	private UI ui;
 	
-	State state;
-	
+	private State state;
+		
 	@Override
 	public void create() {
 		Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());		
@@ -100,6 +106,10 @@ public class Game implements ApplicationListener {
 	@Override
 	public void dispose() {
 		
+	}
+	
+	public void startGame(int difficulty) {
+		ui.closeSign();
 	}
 	
 	private void initializeInputListener() {

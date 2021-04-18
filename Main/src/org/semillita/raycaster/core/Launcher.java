@@ -5,10 +5,18 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 public class Launcher {
 
+	private static Game game;
+	
 	public static void main(String[] args) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "Raycaster game";
-		new LwjglApplication(new Game(), config);
+		game = new Game();
+		
+		new LwjglApplication(game, config);
+	}
+	
+	public static Game getGame() {
+		return game;
 	}
 	
 }

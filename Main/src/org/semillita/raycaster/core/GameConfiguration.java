@@ -10,8 +10,9 @@ public class GameConfiguration {
 	
 	private ColorTheme theme;
 	private int FOV;
+	private int difficulty;
 	
-	public GameConfiguration(ColorTheme theme, int FOV) {
+	public GameConfiguration(ColorTheme theme, int FOV, int difficulty) {
 		this.theme = theme;
 		this.FOV = FOV;
 	}
@@ -22,6 +23,10 @@ public class GameConfiguration {
 	
 	public int getFOV() {
 		return FOV;
+	}
+	
+	public int getDifficulty() {
+		return difficulty;
 	}
 	
 }

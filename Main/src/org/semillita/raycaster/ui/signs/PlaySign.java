@@ -1,6 +1,10 @@
 package org.semillita.raycaster.ui.signs;
 
 import static org.semillita.raycaster.core.Game.State;
+
+import org.semillita.raycaster.core.Game;
+import org.semillita.raycaster.core.Launcher;
+import org.semillita.raycaster.ui.ConfirmButton;
 import org.semillita.raycaster.ui.DifficultyButton;
 
 import com.badlogic.gdx.Gdx;
@@ -19,6 +23,8 @@ public class PlaySign {
 	
 	private DifficultyButton selectedButton;
 	
+	private ConfirmButton go;
+	
 	public PlaySign(double sizeDenominator) {
 		this.sizeDenominator = sizeDenominator;
 		
@@ -29,6 +35,8 @@ public class PlaySign {
 		hard = new DifficultyButton(new Texture("Resources/Hard.png"), 2, false);
 		
 		selectedButton = easy;
+		
+		go = new ConfirmButton(new Texture("Resources/GO!.png"), 40);
 	}
 	
 	public void render(SpriteBatch batch, int y, int signWidth, int signHeight) {
@@ -38,24 +46,44 @@ public class PlaySign {
 		easy.draw(batch, y, signWidth, signHeight, this);
 		medium.draw(batch, y, signWidth, signHeight, this);
 		hard.draw(batch, y, signWidth, signHeight, this);
+		
+		go.draw(batch, y, this);
 	}
 	
 	public void mouseMove(State state, int x, int y) {
 		easy.mouseMove(x, y);
 		medium.mouseMove(x, y);
 		hard.mouseMove(x, y);
+		
+		go.mouseMove(x, y);
 	}
 	
 	public void mousePress(State state, int x, int y) {
 		easy.mousePress(x, y);
 		medium.mousePress(x, y);
 		hard.mousePress(x, y);
+		
+		go.mousePress(x, y);
 	}
 	
 	public void mouseRelease(State state, int x, int y) {
 		easy.mouseRelease(x, y);
 		medium.mouseRelease(x, y);
 		hard.mouseRelease(x, y);
+		
+		go.mouseRelease(x, y);
+	}
+	
+	public void confirmButtonCallback() {
+		int difficulty;
+		if(selectedButton == easy) {
+			difficulty = 1;
+		} else if(selectedButton == medium) {
+			difficulty = 2;
+		} else {
+			difficulty = 3;
+		}
+		Launcher.getGame().startGame(difficulty);
 	}
 	
 	public void selectButton(DifficultyButton button) {
