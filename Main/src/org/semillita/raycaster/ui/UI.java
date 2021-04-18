@@ -140,6 +140,26 @@ public class UI {
 			playButton.mousePress(x, y);
 			settingsButton.mousePress(x, y);
 			quitButton.mousePress(x, y);
+		} else if(signProperty != SignProperty.OFF){
+			
+			Object signController = signProperty.getController();
+			
+		switch(signProperty) {
+		case PLAY:
+			PlaySign playController = (PlaySign) signController;
+			playController.mousePress(state, x, y);
+			break;
+		case SETTINGS:
+			SettingsSign settingsController = (SettingsSign) signController;
+			settingsController.mousePress(state, x, y);
+			break;
+		case QUIT:
+			QuitSign quitController = (QuitSign) signController;
+			quitController.mousePress(state, x, y);
+			break;
+		case RETURN:
+			break;
+		}
 		}
 	}
 	
@@ -148,6 +168,26 @@ public class UI {
 			playButton.mouseRelease(x, y);
 			settingsButton.mouseRelease(x, y);
 			quitButton.mouseRelease(x, y);
+		} else if(signProperty != SignProperty.OFF){
+			
+			Object signController = signProperty.getController();
+			
+		switch(signProperty) {
+		case PLAY:
+			PlaySign playController = (PlaySign) signController;
+			playController.mouseRelease(state, x, y);
+			break;
+		case SETTINGS:
+			SettingsSign settingsController = (SettingsSign) signController;
+			settingsController.mouseRelease(state, x, y);
+			break;
+		case QUIT:
+			QuitSign quitController = (QuitSign) signController;
+			quitController.mouseRelease(state, x, y);
+			break;
+		case RETURN:
+			break;
+		}
 		}
 	}
 	

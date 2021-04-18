@@ -17,23 +17,27 @@ public class PlaySign {
 	private DifficultyButton medium;
 	private DifficultyButton hard;
 	
+	private DifficultyButton selectedButton;
+	
 	public PlaySign(double sizeDenominator) {
 		this.sizeDenominator = sizeDenominator;
 		
 		difficulty = new Texture("Resources/Difficulty.png");
 		
-		easy = new DifficultyButton(new Texture("Resources/Easy.png"), 0);
-		medium = new DifficultyButton(new Texture("Resources/Medium.png"), 1);
-		hard = new DifficultyButton(new Texture("Resources/Hard.png"), 2);
+		easy = new DifficultyButton(new Texture("Resources/Easy.png"), 0, true);
+		medium = new DifficultyButton(new Texture("Resources/Medium.png"), 1, false);
+		hard = new DifficultyButton(new Texture("Resources/Hard.png"), 2, false);
+		
+		selectedButton = easy;
 	}
 	
 	public void render(SpriteBatch batch, int y, int signWidth, int signHeight) {
 		batch.draw(difficulty, (int) (Gdx.graphics.getWidth() / 2 - (difficulty.getWidth() / sizeDenominator) / 2), (int) (y + signHeight / 2.2), 
 				(int) (difficulty.getWidth() / sizeDenominator), (int) (difficulty.getHeight() / sizeDenominator));
 		
-		easy.draw(batch, y, signWidth, signHeight);
-		medium.draw(batch, y, signWidth, signHeight);
-		hard.draw(batch, y, signWidth, signHeight);
+		easy.draw(batch, y, signWidth, signHeight, this);
+		medium.draw(batch, y, signWidth, signHeight, this);
+		hard.draw(batch, y, signWidth, signHeight, this);
 	}
 	
 	public void mouseMove(State state, int x, int y) {
@@ -52,6 +56,14 @@ public class PlaySign {
 		easy.mouseRelease(x, y);
 		medium.mouseRelease(x, y);
 		hard.mouseRelease(x, y);
+	}
+	
+	public void selectButton(DifficultyButton button) {
+		selectedButton = button;
+	}
+	
+	public DifficultyButton getSelectedButton() {
+		return selectedButton;
 	}
 	
 }

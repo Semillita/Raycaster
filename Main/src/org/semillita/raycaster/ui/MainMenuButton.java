@@ -109,7 +109,7 @@ public class MainMenuButton {
 		if(mode == Mode.ANIMATING) {
 			animationProgress += fps * deltaTime;
 			if(animationProgress >= frames) {
-				mode = Mode.HOVERED;
+				mode = Mode.NEUTRAL;
 				animationProgress = 0;
 				blockInput = false;
 				ui.mainMenuButtonCallback(this);
