@@ -19,17 +19,17 @@ public class Collision {
 		}
 	}
 	
-	private float distance;
+	private double distance;
 	private Orientation orientation;
 	private boolean goal;
 	
-	public Collision(float distance, Orientation orientation, boolean goal) {
+	public Collision(double distance, Orientation orientation, boolean goal) {
 		this.distance = distance;
 		this.orientation = orientation;
 		this.goal = goal;
 	}
 	
-	public float getDistance() {
+	public double getDistance() {
 		return distance;
 	}
 	

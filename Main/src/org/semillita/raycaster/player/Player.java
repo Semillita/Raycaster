@@ -110,9 +110,7 @@ public class Player {
 		float distanceToTarget = (float) sqrt(distanceX * distanceX + distanceY * distanceY);
 		
 		if ((int) (x + distanceX) == 12 && (int) (y + distanceY) == 14) {
-			System.out.println("GOAL");
-		} else {
-			System.out.println("Trying to move to " + (x + distanceX) + " and " + (y + distanceY));
+			//System.out.println("GOAL");
 		}
 		
 		if (forwardCollision.getDistance() < distanceToTarget) {
@@ -126,16 +124,11 @@ public class Player {
 		}
 		
 		if (!map.hasBlock((int) (x + distanceX), (int) (y + distanceY))) {
-			System.out.println("h");
 			if (map.hasGoal((int) (x + distanceX), (int) (y + distanceY))) {
-				System.out.println("FINISHED");
 			} else {
-				System.out.println("moving");
 				x += distanceX;
 				y += distanceY;
 			}
-		} else {
-			System.out.println("BLOCK IN THE WAY");
 		}
 
 	}
