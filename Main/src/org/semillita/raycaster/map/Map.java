@@ -21,8 +21,8 @@ public class Map {
 		}
 		scanner.close();
 		
-		height = lines.size();
-		width = lines.get(0).length();
+		width = lines.size();
+		height = lines.get(0).length();
 		
 		blocks = new ArrayList<>();
 		for(int y = 0; y < lines.size(); y++) {
@@ -63,7 +63,6 @@ public class Map {
 	public boolean hasBlock(int x, int y) {
 		List<Integer> block = Arrays.asList(x, y);
 		if(blocks.contains(block)) {
-			//System.out.println("Collision at " + block);
 			return true;
 		}
 		return false;

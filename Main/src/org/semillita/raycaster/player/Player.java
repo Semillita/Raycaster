@@ -12,6 +12,7 @@ import static java.lang.Math.sqrt;
 import org.semillita.raycaster.camera.Camera;
 import org.semillita.raycaster.camera.Collision;
 import org.semillita.raycaster.camera.Collision.Orientation;
+import org.semillita.raycaster.core.Game;
 import org.semillita.raycaster.map.Map;
 
 import com.badlogic.gdx.Gdx;
@@ -35,7 +36,10 @@ public class Player {
 		lastFrame = System.nanoTime();
 	}
 
-	public void move(Map map, Camera camera) {
+	public void move(Game game, Map map, Camera camera) {
+		if (!game.getPlayerMovement()) {
+			return;
+		}
 		final long thisFrame = System.nanoTime();
 		final float deltaTime = (thisFrame - lastFrame) / 1_000_000_000f;
 		lastFrame = thisFrame;
@@ -108,12 +112,14 @@ public class Player {
 		Collision forwardCollision = camera.castRay(map, this, ma);
 
 		float distanceToTarget = (float) sqrt(distanceX * distanceX + distanceY * distanceY);
-		
+
 		if ((int) (x + distanceX) == 12 && (int) (y + distanceY) == 14) {
-			//System.out.println("GOAL");
 		}
-		
+
 		if (forwardCollision.getDistance() < distanceToTarget) {
+			if(forwardCollision.isGoal()) {
+				game.win();
+			}
 			switch (forwardCollision.getOrientation()) {
 			case HORIZONTAL:
 				distanceY = 0;
@@ -122,13 +128,10 @@ public class Player {
 				distanceX = 0;
 			}
 		}
-		
+
 		if (!map.hasBlock((int) (x + distanceX), (int) (y + distanceY))) {
-			if (map.hasGoal((int) (x + distanceX), (int) (y + distanceY))) {
-			} else {
-				x += distanceX;
-				y += distanceY;
-			}
+			x += distanceX;
+			y += distanceY;
 		}
 
 	}

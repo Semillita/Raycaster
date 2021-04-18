@@ -6,6 +6,7 @@ import org.semillita.raycaster.core.Game;
 import org.semillita.raycaster.core.Launcher;
 import org.semillita.raycaster.ui.ConfirmButton;
 import org.semillita.raycaster.ui.DifficultyButton;
+import org.semillita.raycaster.ui.UI;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -50,12 +51,12 @@ public class PlaySign {
 		go.draw(batch, y, this);
 	}
 	
-	public void mouseMove(State state, int x, int y) {
-		easy.mouseMove(x, y);
-		medium.mouseMove(x, y);
-		hard.mouseMove(x, y);
+	public void mouseMove(State state, int x, int y, UI ui) {
+		easy.mouseMove(x, y, ui);
+		medium.mouseMove(x, y, ui);
+		hard.mouseMove(x, y, ui);
 		
-		go.mouseMove(x, y);
+		go.mouseMove(x, y, ui);
 	}
 	
 	public void mousePress(State state, int x, int y) {

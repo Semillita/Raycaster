@@ -9,6 +9,7 @@ import static java.lang.Math.toRadians;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.semillita.raycaster.core.Game.ColorTheme;
 import org.semillita.raycaster.map.Map;
 import org.semillita.raycaster.player.Player;
 
@@ -20,14 +21,43 @@ public class Camera {
 
 	private static final double FOV = 70;
 
-	public Texture green;
-	public Texture darkGreen;
-	public Texture red;
+	public static Texture yellow1;
+	public static Texture yellow2;
+	public static Texture green1;
+	public static Texture green2;
+	public static Texture purple1;
+	public static Texture purple2;
+	
+	public static Texture goal;
 
-	public Camera() {
-		green = new Texture("green.png");
-		darkGreen = new Texture("darkGreen.png");
-		red = new Texture("red.png");
+	static {
+		yellow1 = new Texture("yellow1.png");
+		yellow2 = new Texture("yellow2.png");
+		green1 = new Texture("green1.png");
+		green2 = new Texture("green2.png");
+		purple1 = new Texture("purple1.png");
+		purple2 = new Texture("purple2.png");
+		
+		goal = new Texture("goal.png");
+	}
+	
+	private Texture color1, color2;
+	
+	public Camera(ColorTheme color) {
+		switch(color) {
+		case YELLOW:
+			color1 = yellow1;
+			color2 = yellow2;
+			break;
+		case GREEN:
+			color1 = green1;
+			color2 = green2;
+			break;
+		case PURPLE:
+			color1 = purple1;
+			color2 = purple2;
+			break;
+		}
 	}
 	
 	public void render(SpriteBatch batch, Map map, Player player) {
@@ -53,11 +83,11 @@ public class Camera {
 			Texture texture;
 			
 			if(collision.isGoal()) {
-				texture = red;
+				texture = goal;
 			} else if(collision.getOrientation() == Collision.Orientation.HORIZONTAL) {
-				texture = green;
+				texture = color1;
 			} else {
-				texture = darkGreen;
+				texture = color2;
 			}
 			
 			distance *= cos(toRadians(Math.max(angleFromCamera, -angleFromCamera)));

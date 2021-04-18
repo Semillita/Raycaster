@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.semillita.raycaster.ui.signs.PlaySign;
+import org.semillita.raycaster.ui.signs.QuitSign;
+import org.semillita.raycaster.ui.signs.ReturnSign;
+import org.semillita.raycaster.ui.signs.SettingsSign;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -73,9 +76,7 @@ public class ConfirmButton {
 		long thisFrame = System.nanoTime();
 		double deltaTime = (thisFrame - lastFrame) / 1_000_000_000d;
 		lastFrame = thisFrame;
-		
-		System.out.println(mode);
-		
+				
 		batch.draw(body, x, signY + y, width, height);
 		
 		switch(mode) {
@@ -95,17 +96,23 @@ public class ConfirmButton {
 			break;
 		case ANIMATING:
 			animationProgress += fps * deltaTime;
-			System.out.println("//");
-			System.out.println(deltaTime * fps);
 			if(animationProgress >= frames) {
 				mode = Mode.NEUTRAL;
-				//blockInput = false;
+				blockInput = false;
 				animationProgress = 0;
-				System.out.println("reset");
 				
 				if(signController instanceof PlaySign) {
 					PlaySign playController = (PlaySign) signController;
 					playController.confirmButtonCallback();
+				} else if(signController instanceof SettingsSign) {
+					SettingsSign settingsController = (SettingsSign) signController;
+					settingsController.confirmButtonCallback();
+				} else if(signController instanceof QuitSign) {
+					QuitSign quitController = (QuitSign) signController;
+					quitController.confirmButtonCallback();
+				} else if(signController instanceof ReturnSign) {
+					ReturnSign returnController = (ReturnSign) signController;
+					returnController.confirmButtonCallback();
 				}
 			} else {
 				Texture animationTexture = selectAnimation.get((int) animationProgress);
@@ -126,7 +133,7 @@ public class ConfirmButton {
 		//draw text
 	}
 	
-	public void mouseMove(int x, int y) {
+	public void mouseMove(int x, int y, UI ui) {
 		if(blockInput) {
 			return;
 		}
@@ -134,6 +141,7 @@ public class ConfirmButton {
 		case NEUTRAL:
 			if(isInside(x, y)) {
 				mode = Mode.HOVERED;
+				ui.playIteration();
 			}
 			break;
 		case HOVERED:

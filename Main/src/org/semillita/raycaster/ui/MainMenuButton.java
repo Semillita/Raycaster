@@ -39,9 +39,7 @@ public class MainMenuButton {
 	
 	static {
 		sizeDenominator = 2160 / Gdx.graphics.getHeight();
-		
-		System.out.println("sd = " + sizeDenominator);
-		
+				
 		border = new Texture("Resources/ButtonBorder.png");
 		background = new Texture("Resources/ButtonBackground.png");
 		
@@ -77,11 +75,7 @@ public class MainMenuButton {
 	
 	public MainMenuButton(int offset, Texture text) {
 		y = (int) (Gdx.graphics.getHeight() / 2 + (1.5 * (offset - 1)) * (buttonHeight));
-		
-		System.out.println("///");
-		System.out.println(offset);
-		System.out.println(y);
-		
+				
 		this.text = text;
 		
 		mode = Mode.NEUTRAL;
@@ -143,7 +137,7 @@ public class MainMenuButton {
 				(int) (text.getWidth() / sizeDenominator), (int) (text.getHeight() / sizeDenominator));
 	}
 	
-	public void mouseMove(int x, int y) {
+	public void mouseMove(int x, int y, UI ui) {
 		if(blockInput) {
 			return;
 		}
@@ -151,7 +145,8 @@ public class MainMenuButton {
 		case NEUTRAL:
 			if(isInside(x, y)) {
 				mode = Mode.HOVERED;
-				System.out.println(offset);
+				ui.playIteration();
+				System.out.println("iterate");
 			}
 			break;
 		case HOVERED:
@@ -175,7 +170,7 @@ public class MainMenuButton {
 		}
 	}
 	
-	public void mouseRelease(int x, int y) {
+	public void mouseRelease(int x, int y, UI ui) {
 		if(blockInput) {
 			return;
 		}
@@ -184,6 +179,7 @@ public class MainMenuButton {
 			if(isInside(x, y)) {
 				blockInput = true;
 				mode = Mode.ANIMATING;
+				ui.playGunShot();
 			} else {
 				mode = Mode.NEUTRAL;
 			}

@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.semillita.raycaster.ui.signs.PlaySign;
+import org.semillita.raycaster.ui.signs.SettingsSign;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class DifficultyButton {
-	
+public class ColorButton {
+
 	private static enum Mode {
 		NEUTRAL,
 		HOVERED,
@@ -49,7 +50,7 @@ public class DifficultyButton {
 	
 	private long lastFrame;
 	
-	public DifficultyButton(Texture texture, int offset, boolean selected) {
+	public ColorButton(Texture texture, int offset, boolean selected) {
 		this.texture = texture;
 		
 		this.offset = offset;
@@ -61,7 +62,7 @@ public class DifficultyButton {
 		}
 	}
 	
-	public void draw(SpriteBatch batch, int signY, int signWidth, int signHeight, PlaySign playSign) {
+	public void draw(SpriteBatch batch, int signY, int signWidth, int signHeight, SettingsSign settingsSign) {
 		final double sizeDenominator = 2160 / Gdx.graphics.getHeight();
 				
 		long thisFrame = System.nanoTime();
@@ -102,7 +103,7 @@ public class DifficultyButton {
 				mode = Mode.SELECTED;
 				blockInput = false;
 				animationProgress = 0;
-				playSign.selectButton(this);
+				settingsSign.selectButton(this);
 			} else {
 				Texture animationTexture = selectAnimation.get((int) animationProgress);
 				final int animationWidth = (int) (animationTexture.getWidth() / sizeDenominator);
@@ -119,7 +120,7 @@ public class DifficultyButton {
 			final int selectedY = y + (height / 2) - (selectedHeight / 2);
 			batch.draw(selected, selectedX, selectedY, selectedWidth, selectedHeight);
 			
-			if(playSign.getSelectedButton() != this) {
+			if(settingsSign.getSelectedButton() != this) {
 				mode = Mode.NEUTRAL;
 			}
 		}

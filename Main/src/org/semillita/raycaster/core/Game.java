@@ -11,6 +11,7 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
@@ -27,6 +28,7 @@ public class Game implements ApplicationListener {
 	
 	public static enum State {
 		MAIN_MENU,
+		FADING,
 		LOADING,
 		GAME
 	}
@@ -48,10 +50,22 @@ public class Game implements ApplicationListener {
 	private UI ui;
 	
 	private State state;
-		
+	
+	private ColorTheme color;
+	
+	private int difficulty = 0;
+	
+	private double fadeAcc = 1;
+	
+	private long lastFrame;
+	
+	private boolean playerMove = false;
+	
 	@Override
 	public void create() {
-		Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());		
+		Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+		
+		color = ColorTheme.YELLOW;
 		
 		orthoCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		orthoCamera.position.set(orthoCamera.viewportWidth / 2, orthoCamera.viewportHeight / 2, 0);
@@ -59,7 +73,7 @@ public class Game implements ApplicationListener {
 		
 		batch = new SpriteBatch();
 		
-		gameCamera = new Camera();
+		gameCamera = new Camera(color);
 		map = new Map(this.getClass().getClassLoader().getResourceAsStream("map.txt"));
 		player = new Player(map.getStartX(), map.getStartY(), (float) 20);
 		
@@ -68,29 +82,34 @@ public class Game implements ApplicationListener {
 		state = State.MAIN_MENU;
 		
 		initializeInputListener();
+		
+		lastFrame = System.nanoTime();
 	}
 
 	@Override
 	public void render() {
 		orthoCamera.update();
 		
+		long thisFrame = System.nanoTime();
+		double deltaTime = (thisFrame - lastFrame) / 1_000_000_000d;
+		lastFrame = thisFrame;
+		
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	    batch.begin();
 	    batch.setProjectionMatrix(orthoCamera.combined);
-	    if(state == State.GAME) gameCamera.render(batch, map, player);
-	    if(state == State.MAIN_MENU) ui.render(batch, state);
+	    if(state == State.GAME) {
+	    	gameCamera.render(batch, map, player);
+	    }
+	    ui.render(batch, this, state);
 	    batch.end();
 	    
-	    player.move(map, gameCamera);
+	    player.move(this, map, gameCamera);
 	}
 	
 	@Override
 	public void resize(int width, int height) {
 		viewport.update(width, height, true);
-		System.out.println("//");
-		System.out.println(width);
-		System.out.println(height);
 	}
 
 	@Override
@@ -109,7 +128,41 @@ public class Game implements ApplicationListener {
 	}
 	
 	public void startGame(int difficulty) {
+		this.difficulty = difficulty;
 		ui.closeSign();
+		ui.playWhip();
+		gameCamera = new Camera(color);
+		map = new Map(this.getClass().getClassLoader().getResourceAsStream("Maps/" + difficulty + ".txt"));
+		player = new Player(map.getStartX(), map.getStartY(), (float) 20);
+		state = State.GAME;
+		setPlayerMovement(true);
+	}
+	
+	public void returnToMenu() {
+		state = State.MAIN_MENU;
+		ui.closeSign();
+	}
+	
+	public void setColorTheme(ColorTheme color) {
+		this.color = color;
+		ui.closeSign();
+	}
+	
+	public ColorTheme getColorTheme() {
+		return color;
+	}
+	
+	public void setPlayerMovement(boolean movement) {
+		playerMove = movement;
+	}
+	
+	public boolean getPlayerMovement() {
+		return playerMove;
+	}
+	
+	public void win() {
+		setPlayerMovement(false);
+		ui.summonSign(UI.SignProperty.RETURN);
 	}
 	
 	private void initializeInputListener() {
@@ -118,14 +171,6 @@ public class Game implements ApplicationListener {
 			@Override
 			public boolean keyDown(int key) {
 				ui.keyPress(state, key);
-				
-				if(key == Keys.ESCAPE) {
-					state = State.MAIN_MENU;
-				}
-				
-				if(key == Keys.SPACE) {
-					state = State.GAME;
-				}
 				return false;
 			}
 
@@ -144,7 +189,6 @@ public class Game implements ApplicationListener {
 			@Override
 			public boolean mouseMoved(int x, int y) {
 				y = (Gdx.graphics.getHeight() - 1 - y);
-				if(y < 10) System.out.println(y);
 				ui.mouseMove(state, x, y);
 				return false;
 			}
