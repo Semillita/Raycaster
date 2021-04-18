@@ -39,6 +39,8 @@ public class UI {
 	private Texture sign;
 	
 	private double signDropTime = -1;
+	private final int signDropBase = 50;
+	private final int signDropForce = 80;
 	
 	MainMenuButton playButton, settingsButton, quitButton;
 	
@@ -51,7 +53,7 @@ public class UI {
 		
 		playButton = new MainMenuButton(2, new Texture("Resources/Play.png"));
 		settingsButton = new MainMenuButton(1, new Texture("Resources/Settings.png"));
-		quitButton = new MainMenuButton(0, new Texture("Resources/Play.png"));
+		quitButton = new MainMenuButton(0, new Texture("Resources/Quit.png"));
 		
 		lastFrame = System.nanoTime();
 	}
@@ -71,7 +73,7 @@ public class UI {
 			int signY;
 			if(signDropTime != -1) {
 				signDropTime += deltaTime;
-				signY = (int) (Gdx.graphics.getHeight() - Math.pow(10, signDropTime) / sizeDenominator);
+				signY = (int) (Gdx.graphics.getHeight() -  signDropForce * Math.pow(signDropBase, signDropTime) / sizeDenominator);
 				
 				if(signY < Gdx.graphics.getHeight() - sign.getHeight() / sizeDenominator) {
 					signY = (int) (Gdx.graphics.getHeight() - sign.getHeight() / sizeDenominator);
@@ -81,22 +83,23 @@ public class UI {
 				signY = (int) (Gdx.graphics.getHeight() - sign.getHeight() / sizeDenominator);
 			}
 			
-			//batch.draw(sign, x, y);
+			batch.draw(sign, (int) (Gdx.graphics.getWidth() / 2 - (sign.getWidth() / sizeDenominator) / 2), signY, 
+					(int) (sign.getWidth() / sizeDenominator), (int) (sign.getHeight() / sizeDenominator));
 			
 			Object signController = signProperty.getController();
 			
 			switch(signProperty) {
 			case PLAY:
 				PlaySign playController = (PlaySign) signController;
-				playController.render(batch, 500);
+				playController.render(batch, signY, (int) (sign.getWidth() / sizeDenominator), (int) (sign.getHeight() / sizeDenominator));
 				break;
 			case SETTINGS:
 				SettingsSign settingsController = (SettingsSign) signController;
-				settingsController.render(batch, 500);
+				settingsController.render(batch, signY, (int) (sign.getWidth() / sizeDenominator), (int) (sign.getHeight() / sizeDenominator));
 				break;
 			case QUIT:
 				QuitSign quitController = (QuitSign) signController;
-				quitController.render(batch, 500);
+				quitController.render(batch, signY, (int) (sign.getWidth() / sizeDenominator), (int) (sign.getHeight() / sizeDenominator));
 				break;
 			case RETURN:
 				break;
@@ -109,6 +112,26 @@ public class UI {
 			playButton.mouseMove(x, y);
 			settingsButton.mouseMove(x, y);
 			quitButton.mouseMove(x, y);
+		} else if(signProperty != SignProperty.OFF){
+			
+			Object signController = signProperty.getController();
+			
+		switch(signProperty) {
+		case PLAY:
+			PlaySign playController = (PlaySign) signController;
+			playController.mouseMove(state, x, y);
+			break;
+		case SETTINGS:
+			SettingsSign settingsController = (SettingsSign) signController;
+			settingsController.mouseMove(state, x, y);
+			break;
+		case QUIT:
+			QuitSign quitController = (QuitSign) signController;
+			quitController.mouseMove(state, x, y);
+			break;
+		case RETURN:
+			break;
+		}
 		}
 	}
 	
@@ -145,6 +168,23 @@ public class UI {
 	private void summonSign(SignProperty sign) {
 		signProperty = sign;
 		signDropTime = 0;
+	}
+
+	private int getSignPosition() {
+		final long thisFrame = System.nanoTime();
+		final double deltaTime = (thisFrame - lastFrame) / 1_000_000_000d;
+		lastFrame = thisFrame;
+		
+		int signY;
+		
+		signY = (int) (Gdx.graphics.getHeight() -  signDropForce * Math.pow(signDropBase, signDropTime) / sizeDenominator);
+		
+		if(signY < Gdx.graphics.getHeight() - sign.getHeight() / sizeDenominator) {
+			signY = (int) (Gdx.graphics.getHeight() - sign.getHeight() / sizeDenominator);
+			signDropTime = -1;
+		}
+		
+		return signY;
 	}
 	
 	private void initializeTextures() {

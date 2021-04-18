@@ -31,7 +31,7 @@ public class MainMenuButton {
 	
 	private static double stretchFactor = 1.1;
 	
-	private static int fps = 10;
+	private static int fps = 24;
 	
 	private static int frames = 6;
 	
@@ -59,7 +59,7 @@ public class MainMenuButton {
 		buttonX = Gdx.graphics.getWidth() / 2;
 	}
 	
-	public static enum Mode {
+	private static enum Mode {
 		NEUTRAL,
 		HOVERED,
 		SELECTED,
@@ -109,7 +109,7 @@ public class MainMenuButton {
 		if(mode == Mode.ANIMATING) {
 			animationProgress += fps * deltaTime;
 			if(animationProgress >= frames) {
-				mode = Mode.NEUTRAL;
+				mode = Mode.HOVERED;
 				animationProgress = 0;
 				blockInput = false;
 				ui.mainMenuButtonCallback(this);
