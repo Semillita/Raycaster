@@ -15,10 +15,12 @@ public class MainMenuButton {
 	private static Texture background;
 	
 	private static Texture hover;
+	
 	private static Texture gun;
+	private static Texture gunHold;
+	private static List<Texture> gunAnimation;
 	
 	private static List<Texture> borderAnimation;
-	private static List<Texture> gunAnimation;
 	
 	private static int buttonWidth;
 	private static int buttonHeight;
@@ -33,6 +35,8 @@ public class MainMenuButton {
 	
 	private static int frames = 6;
 	
+	private static boolean blockInput = false;
+	
 	static {
 		sizeDenominator = 2160 / Gdx.graphics.getHeight();
 		
@@ -42,15 +46,15 @@ public class MainMenuButton {
 		background = new Texture("Resources/ButtonBackground.png");
 		
 		hover = new Texture("Resources/ButtonHover.png");
+		
 		gun = new Texture("Resources/Gun.png");
+		gunHold = new Texture("Resources/GunHold.png");
+		gunAnimation = loadAnimation("gunAnimation/", 10);
 		
 		borderAnimation = loadAnimation("borderAnimation/", 10);
-		gunAnimation = loadAnimation("gunAnimation/", 10);
 		
 		buttonWidth = (int) (border.getWidth() / sizeDenominator);
 		buttonHeight = (int) (border.getHeight() / sizeDenominator);
-		
-		//distanceBetweenButtons = buttonHeight / 2;
 		
 		buttonX = Gdx.graphics.getWidth() / 2;
 	}
@@ -99,37 +103,24 @@ public class MainMenuButton {
 		double deltaTime = (thisFrame - lastFrame) / 1_000_000_000d;
 		lastFrame = thisFrame;
 		
-		/*if(animationProgress >= borderAnimation.size()) {
-			if(mode == Mode.ANIMATING) {
-				mode = Mode.NEUTRAL;	
-			}
-			animationProgress = 0;
-		} else {
-			System.out.println("Nah, " + animationProgress);
-		}
-		
-		if(mode == Mode.ANIMATING) {
-			animationProgress += fps * deltaTime;
-			if(animationProgress > 5) {
-				System.out.println(animationProgress);
-				System.out.println(borderAnimation.size());
-			}
-			borderTex = borderAnimation.get((int) animationProgress);
-		}*/
-		
 		Texture borderTex = border;
 		Texture gunTex = gun;
 		
 		if(mode == Mode.ANIMATING) {
 			animationProgress += fps * deltaTime;
 			if(animationProgress >= frames) {
-				mode = Mode.HOVERED;
+				mode = Mode.NEUTRAL;
 				animationProgress = 0;
+				blockInput = false;
 				ui.mainMenuButtonCallback(this);
 			} else {
 				borderTex = borderAnimation.get((int) animationProgress);
 				gunTex = gunAnimation.get((int) animationProgress);
 			}
+		}
+		
+		if(mode == Mode.SELECTED) {
+			gunTex = gunHold;
 		}
 		
 		final int borderTexHeight = (int) (borderTex.getHeight() / sizeDenominator);
@@ -139,7 +130,7 @@ public class MainMenuButton {
 				(int) (scale * background.getWidth() / sizeDenominator), (int) (background.getHeight() / sizeDenominator));
 		
 		if(mode == Mode.HOVERED || mode == Mode.SELECTED || mode == Mode.ANIMATING) {
-			batch.draw(gunTex, (int) (buttonX -  (buttonWidth * 1.2)), (int) (y - (gunTex.getHeight() / sizeDenominator) / 1.2), 
+			batch.draw(gunTex, (int) (buttonX -  (buttonWidth * 1.2)), (int) (y - (gun.getHeight() / sizeDenominator) / 1.2), 
 					(int) (gunTex.getWidth() / sizeDenominator), (int) (gunTex.getHeight() / sizeDenominator));	
 		}
 		
@@ -153,10 +144,12 @@ public class MainMenuButton {
 	}
 	
 	public void mouseMove(int x, int y) {
+		if(blockInput) {
+			return;
+		}
 		switch(mode) {
 		case NEUTRAL:
 			if(isInside(x, y)) {
-				System.out.println("SET TO HOVER");
 				mode = Mode.HOVERED;
 				System.out.println(offset);
 			}
@@ -174,16 +167,22 @@ public class MainMenuButton {
 	}
 	
 	public void mousePress(int x, int y) {
+		if(blockInput) {
+			return;
+		}
 		if(isInside(x, y)) {
 			mode = Mode.SELECTED;
 		}
 	}
 	
 	public void mouseRelease(int x, int y) {
+		if(blockInput) {
+			return;
+		}
 		switch(mode) {
 		case SELECTED:
 			if(isInside(x, y)) {
-				//Full click
+				blockInput = true;
 				mode = Mode.ANIMATING;
 			} else {
 				mode = Mode.NEUTRAL;
@@ -197,7 +196,6 @@ public class MainMenuButton {
 	}
 	
 	private boolean isInside(int x, int y) {
-		System.out.println("IsInside: " + y);
 		if(x >= buttonX - (buttonWidth / 2) && x <= buttonX + (buttonWidth / 2)) {
 			if(y >= this.y - (buttonHeight / 2) && y <= this.y + (buttonHeight / 2)) {
 				return true;

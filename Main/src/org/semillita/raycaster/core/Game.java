@@ -45,9 +45,7 @@ public class Game implements ApplicationListener {
 	
 	@Override
 	public void create() {
-		Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
-		System.out.println("Screen size: " + Gdx.graphics.getWidth() + "x" + Gdx.graphics.getHeight());
-		
+		Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());		
 		
 		orthoCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		orthoCamera.position.set(orthoCamera.viewportWidth / 2, orthoCamera.viewportHeight / 2, 0);
@@ -111,7 +109,6 @@ public class Game implements ApplicationListener {
 			public boolean keyDown(int key) {
 				ui.keyPress(state, key);
 				
-				System.out.println(key);
 				if(key == Keys.ESCAPE) {
 					state = State.MAIN_MENU;
 				}

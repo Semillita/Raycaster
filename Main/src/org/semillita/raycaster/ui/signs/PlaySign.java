@@ -4,14 +4,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class PlaySign {
 	
-	
+	private double sizeDenominator;
 	
 	public PlaySign(double sizeDenominator) {
-		
+		this.sizeDenominator = sizeDenominator;
 		
 	}
 	
-	public void render(SpriteBatch batch, double sizeDenominator) {
+	public void render(SpriteBatch batch, int y) {
 		
 	}
 	
