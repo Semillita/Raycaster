@@ -1,0 +1,62 @@
+plugins {
+    id 'application'
+    id 'java'
+    id 'java-library'
+}
+
+group = 'org.semillita.raycaster'
+version = '1.0'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
+sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets.main.resources.srcDirs = [ "assets/" ]
+
+def platform = 'dunno'
+import org.gradle.internal.os.OperatingSystem
+if (OperatingSystem.current().isMacOsX()) {
+    platform = 'macos'
+} else if (OperatingSystem.current().isLinux()) {
+    platform = 'linux'
+} else if (OperatingSystem.current().isWindows()) {
+    platform = 'windows'
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    ext.lwjglVersion = "3.2.3"
+    compile "org.lwjgl:lwjgl:$lwjglVersion"
+    compile "org.lwjgl:lwjgl:$lwjglVersion:natives-$platform"
+    compile "org.lwjgl:lwjgl-glfw:$lwjglVersion"
+    compile "org.lwjgl:lwjgl-opengl:$lwjglVersion"
+
+    ext.libgdxVersion = "1.9.10"
+    compile "com.badlogicgames.gdx:gdx:$libgdxVersion"
+    compile "com.badlogicgames.gdx:gdx-platform:$libgdxVersion:natives-desktop"
+    compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$libgdxVersion"
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "org.semillita.raycaster.core.Launcher"
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+task runIt(type: Exec) {
+    dependsOn jar
+    group = "Execution"
+    description = "Run the output executable jar with ExecTask"
+    commandLine "java", "-jar", jar.archiveFile.get()
+}

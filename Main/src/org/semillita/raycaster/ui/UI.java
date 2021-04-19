@@ -68,7 +68,7 @@ public class UI {
 
 		playButton = new MainMenuButton(2, new Texture("Resources/Play.png"));
 		settingsButton = new MainMenuButton(1, new Texture("Resources/Settings.png"));
-		quitButton = new MainMenuButton(0, new Texture("Resources/Quit.png"));
+		quitButton = new MainMenuButton(0, new Texture("Resources/QUIT.png"));
 
 		gunShot = Gdx.audio.newSound(Gdx.files.internal("GunShotSound.mp3"));
 		iteration = Gdx.audio.newSound(Gdx.files.internal("IterationSound.wav"));

@@ -53,12 +53,6 @@ public class Game implements ApplicationListener {
 	
 	private ColorTheme color;
 	
-	private int difficulty = 0;
-	
-	private double fadeAcc = 1;
-	
-	private long lastFrame;
-	
 	private boolean playerMove = false;
 	
 	@Override
@@ -74,7 +68,7 @@ public class Game implements ApplicationListener {
 		batch = new SpriteBatch();
 		
 		gameCamera = new Camera(color);
-		map = new Map(this.getClass().getClassLoader().getResourceAsStream("map.txt"));
+		map = new Map(this.getClass().getClassLoader().getResourceAsStream("Maps/1.txt"));
 		player = new Player(map.getStartX(), map.getStartY(), (float) 20);
 		
 		ui = new UI();
@@ -82,17 +76,11 @@ public class Game implements ApplicationListener {
 		state = State.MAIN_MENU;
 		
 		initializeInputListener();
-		
-		lastFrame = System.nanoTime();
 	}
 
 	@Override
 	public void render() {
 		orthoCamera.update();
-		
-		long thisFrame = System.nanoTime();
-		double deltaTime = (thisFrame - lastFrame) / 1_000_000_000d;
-		lastFrame = thisFrame;
 		
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -128,7 +116,6 @@ public class Game implements ApplicationListener {
 	}
 	
 	public void startGame(int difficulty) {
-		this.difficulty = difficulty;
 		ui.closeSign();
 		ui.playWhip();
 		gameCamera = new Camera(color);
@@ -176,13 +163,11 @@ public class Game implements ApplicationListener {
 
 			@Override
 			public boolean keyTyped(char arg0) {
-				// TODO Auto-generated method stub
 				return false;
 			}
 
 			@Override
 			public boolean keyUp(int arg0) {
-				// TODO Auto-generated method stub
 				return false;
 			}
 
@@ -193,9 +178,8 @@ public class Game implements ApplicationListener {
 				return false;
 			}
 
-			@Override
+			//@Override
 			public boolean scrolled(int arg0) {
-				// TODO Auto-generated method stub
 				return false;
 			}
 
